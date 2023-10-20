@@ -18,4 +18,7 @@ include ("Funciones.php");
 
 //echo actualizarSitio('6666','https://www.sena.edu.co/es-co/Paginas/default.aspx');
 
-echo mostrarSitio('6666','Visita el sena Capacitate"______"');
+//echo mostrarSitio('6666','Visita el sena Capacitate"______"');
+
+echo consultaPersonas();
+

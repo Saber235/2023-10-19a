@@ -1,6 +1,6 @@
 <?php
 //Este es un mesage que se va a mostrar en la pantalla"__________"
-echo "Hola";
+//echo "Hola";
 
 function consulta(){
     //CODIGO PARA CONECTAR A LA BASE DE DATOS"______"
@@ -117,5 +117,82 @@ function mostrarSitio($Documento,$Frase){
 
     }
     $conexion->close();
+    return $salida;
+}
+/**
+ * Realiza una consulta a la base de datos y devuelve los resultados formateados como una cadena de texto.
+ * Autor: Jhonny Alexander Gonsalez Torres
+ *
+ * @param string $u Documento para buscar datos en la tabla usuarios. (Opcional, por defecto es null).
+ * @param string $c Contraseña para buscar datos en la tabla usuarios. (Opcional, por defecto es null).
+ * @param int $n Número para controlar el tipo de consulta. (Opcional, por defecto es 1).
+ * @return string Devuelve una cadena con los valores de la tabla 'usuarios' separados por saltos de línea.
+ */
+function consultaPersonas($u = null, $c = null, $n = 1)
+{
+    // Se inicializa una variable para acumular los resultados"______"
+    $salida = "";
+
+    // Se establece la conexión a la base de datos con el servidor, nombre de usuario, contraseña y nombre de la base de datos.
+    $conexion = mysqli_connect('localhost', 'root', 'root', 'JanflashMusic');
+
+    // Se define la consulta SQL según el valor de $n.
+    if ($n == 1) {
+        // Consulta principal para seleccionar todos los registros de la tabla 'usuarios'.
+        $sql = "SELECT * FROM Personas";
+        // Si se proporciona un documento, se agrega una condición WHERE a la consulta.
+        if ($u != null) {
+            $sql .= " WHERE Documento='$u'";
+        }
+        // Si se proporcionan tanto el documento como la contraseña, se realiza una consulta adicional con ambas condiciones.
+        if ($u != null && $c != null) {
+            $sql = "SELECT * FROM Personas WHERE Documento='$u' AND Clave='$c'";
+        }
+    } elseif ($n != 1) {
+        // Consulta de recuento para obtener el número total de registros en la tabla 'Personas'.
+        $sql = "SELECT count(*) FROM Personas";
+    } else {
+        // Si $n no es 1 ni diferente de 1, se considera un valor incorrecto y se agrega un mensaje.
+        $salida .= "Valor incorrecto para el parámetro \$n";
+    }
+    if ($y != null && $z != null) {
+        $sqlw = "SELECT Documento,Nombre from Personas where Documento='$y' AND Nombre='$z';";
+    }
+    // Se ejecuta la consulta y se obtiene el conjunto de resultados.
+    $resultado = $conexion->query($sql);
+
+    // Se verifica si se encontraron resultados.
+    if ($resultado) {
+        if ($n == 1) {
+            // Se recorren las filas de resultados y se concatenan las columnas a la variable de salida.
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $salida .= $fila['Documento'] . "<br>"; // Concatenación del primer campo
+                $salida .= $fila['Nombre'] . "<br>"; // Concatenación del segundo campo
+                $salida .= $fila['Clave'] . "<br>";
+            }
+        } elseif ($n != 1) {
+            // Se obtiene el resultado del recuento"____"
+            $count = mysqli_fetch_row($resultado)[0];
+            // Se verifica si el número de resultados es mayor que el límite
+            if ($count > $n) {
+                // Se recorren los primeros 2 resultados y se concatenan las columnas a la variable de salida.
+                while ($fila = mysqli_fetch_assoc($resultado)) {
+                    $salida .= $fila['Documento'] . "<br>"; // Concatenación del primer campo
+                    $salida .= $fila['Nombre'] . "<br>"; // Concatenación del segundo campo
+                }
+            } else {
+                // Se muestra el número total de resultados
+                $salida .= "Número total de registros: $count";
+            }
+        }
+    } else {
+        // No se encontraron resultados o hubo un error en la consulta"_____"
+        $salida .= "Error en la consulta";
+    }
+
+    // Se cierra la conexión a la base de datos"_____"
+    $conexion->close();
+
+    // Se devuelve la cadena acumulada con los resultados de la consulta"______2
     return $salida;
 }
